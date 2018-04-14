@@ -4,10 +4,10 @@ require("dotenv").config();
 var fs = require("fs");
 var request = require("request");
 var keys = require("./keys.js");//links api keys file
-var Twitter = require('twitter');
-var client = new Twitter(keys.twitter);
-var Spotify = require('node-spotify-api');
-var spotify = new Spotify(keys.spotify);
+var twitter = require('twitter');
+var client = new twitter(keys.twitter);
+var spotify = require('node-spotify-api');
+var spotifyKey = new spotify(keys.spotify);
 var command = process.argv[2];
 var value = "";
 
@@ -27,7 +27,7 @@ switch (command) {
         getMovie(omdbApi, value);
         break;
     case "do-what-it-says":
-        doWhatItSays(); 
+        doWhatItSays();
         break;
 };
 
@@ -50,7 +50,9 @@ function getTweets() {
     client.get("statuses/user_timeline/", function (error, tweets, response) {
         for (var i = 0; i < 20; i++) {
             var twitterResults =
-                "\r\n@" + tweets[i].user.screen_name + " - " +
+                "\r\n" + 
+                (i + 1) + ".  " +
+                tweets[i].user.screen_name + " - " +
                 tweets[i].text + "\r\n" +
                 tweets[i].created_at + "\r\n";
             console.log(twitterResults);
@@ -62,18 +64,18 @@ function getTweets() {
 //The Sign
 function getSpotifySong(songName) {
     if (!songName) {
-        songName = "The Sign";
+        songName = "The Sign Ace of Base";
     }
 
     //list of song information data returned from the Spotify api
-    spotify.search({ type: 'track', query: songName }, function (err, data) {
+    spotifyKey.search({ type: 'track', query: songName }, function (err, data) {
         for (var i = 0; i < 1; i++) {
             var results =
                 "\r\n" +
-                data.tracks.items[0].artists[0].name + "\r\n" +
-                data.tracks.items[0].name + "\r\n" +
-                data.tracks.items[0].album.name + "\r\n" +
-                data.tracks.items[0].preview_url + "\r\n";
+                "Artist Name: " + data.tracks.items[0].artists[0].name + "\r\n" +
+                "Songs Name: " + data.tracks.items[0].name + "\r\n" +
+                "Album: " + data.tracks.items[0].album.name + "\r\n" +
+                "Link to Song: " + data.tracks.items[0].preview_url + "\r\n";
             console.log(results);
         }
     });
@@ -90,14 +92,14 @@ function getMovie(omdbApi, movie) {
         var movieObject = JSON.parse(body);
         var movieResults =
             "\r\n" +
-            movieObject.Title + "\r\n" +
-            movieObject.Year + "\r\n" +
-            movieObject.imdbRating + "\r\n" +
-            movieObject.Ratings[1].Value + "\r\n" +
-            movieObject.Country + "\r\n" +
-            movieObject.Language + "\r\n" +
-            movieObject.Plot + "\r\n" +
-            movieObject.Actors + "\r\n";
+            "Title: " + movieObject.Title + "\r\n" +
+            "Year: " + movieObject.Year + "\r\n" +
+            "IMDB Rating: " + movieObject.imdbRating + "\r\n" +
+            "Rotten Tomatoes Rating: " + movieObject.Ratings[1].Value + "\r\n" +
+            "Country Produced: " + movieObject.Country + "\r\n" +
+            "Language of Movie: " + movieObject.Language + "\r\n" +
+            "Plot: " + movieObject.Plot + "\r\n" +
+            "Actors: " + movieObject.Actors + "\r\n";
         console.log(movieResults);
     });
 }
@@ -105,7 +107,7 @@ function getMovie(omdbApi, movie) {
 //Read text from the random.txt and run the command 
 //based on what is in the file
 function doWhatItSays() {
-    fs.readFile("random.txt", "utf8", function(error, data) {
+    fs.readFile("random.txt", "utf8", function (error, data) {
         data = data.split(',');
 
         var fileCommand;
