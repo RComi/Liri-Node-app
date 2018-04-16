@@ -17,6 +17,7 @@
 
 ## Notes
 * Users will need to provide their own twitter and spotify API keys to get started. 
+* Screen shots of what is returned is shown in the images file.
 
 ## Author
 Richard Comi
